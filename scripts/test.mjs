@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import worker from '../worker/index.js';
+import {env} from './dev.mjs';
+let now=Date.now();const original=Date.now;Date.now=()=>now;
+async function call(a,b={},token=''){const r=await worker.fetch(new Request('https://test/api/'+a,{method:'POST',headers:{'Content-Type':'application/json','X-Player':token},body:JSON.stringify(b)}),env);return {status:r.status,...await r.json()}}
+let a=await call('create',{name:'Tester A'});assert.equal(a.status,200);const code=a.room.code;const ta=a.token;let b=await call('join',{code,name:'Tester B'});const tb=b.token;assert.equal(b.room.players.length,2);assert.equal((await call('join',{code})).status,409);assert.equal((await call('pop',{code,id:0},'fake')).status,401);assert.equal((await call('pop',{code,id:0},ta)).status,409);
+await call('ready',{code},ta);let start=await call('ready',{code},tb);assert.equal(start.room.round,1);assert(start.room.start>now);now=start.room.start+1200;
+const race=await Promise.all([call('pop',{code,id:1},ta),call('pop',{code,id:1},tb)]);assert.deepEqual(race.map(x=>x.status).sort(),[200,409]);let state=await call('state',{code},ta);assert.equal(state.room.events.length,1);assert.equal(state.room.players.reduce((s,p)=>s+p.score,0),state.room.events[0].points);assert(!JSON.stringify(state.room).includes(ta));assert.equal((await call('pop',{code,id:99},ta)).status,409);
+now=start.room.start+60001;assert.equal((await call('pop',{code,id:108},ta)).status,409);await call('ready',{code},ta);const next=await call('ready',{code},tb);assert.equal(next.room.round,2);assert.equal(next.room.events.length,0);assert.equal(next.room.players[0].score,0);Date.now=original;
+const html=await (await worker.fetch(new Request('https://test/'),env)).text();const script=html.match(/<script>([\s\S]*)<\/script>/)[1];new Function(script);assert(html.includes('LEGENDARY'));console.log('PASS: two players, room capacity, authentication, countdown, concurrent pop ownership, score consistency, hidden tokens, future/late pop rejection, rematch, client script syntax.');
