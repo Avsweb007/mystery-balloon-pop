@@ -1,6 +1,6 @@
 # Mystery Balloon Pop 🎈
 
-An original two-player game conceived by Amy and built with ChatGPT assistance for a Handshake game-building challenge.
+An original two-player game conceived by Avsweb007 and built with ChatGPT assistance for a Handshake game-building challenge.
 
 [Play the game](https://mystery-balloon-pop-amy.ovoidcamel1.chatgpt.site/)
 
@@ -8,7 +8,7 @@ An original two-player game conceived by Amy and built with ChatGPT assistance f
 Create a room, share its code with a friend, and have both players get ready. Pop balloons to discover mystery prizes. Rare prizes earn more points. The highest score wins the 60-second round.
 
 ## About the project
-Amy imagined colorful balloons floating upward with hidden surprises inside. She guided the design and tested the game with a family member. ChatGPT assisted with coding, testing, and publishing.
+Avsweb007 imagined colorful balloons floating upward with hidden surprises inside. She guided the design and tested the game with a family member. ChatGPT assisted with coding, testing, and publishing.
 
 Built with JavaScript, HTML, CSS, Cloudflare Workers, and D1. The client and server are in worker/index.js. The SQL schema is in drizzle/0000_rooms.sql. Version checks prevent two players claiming the same balloon.
 
